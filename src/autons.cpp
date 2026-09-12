@@ -58,40 +58,6 @@ chassis.pid_drive_exit_condition_set(40_ms, 2.5_in, 80_ms, 4_in, 150_ms, 150_ms)
  chassis.pid_angle_behavior_set(ez::shortest); // Changes the default behavior for turning, this defaults it to the shortest path there
 }
 
-void hold_constants() {
- // P, I, D, and Start I
- chassis.pid_drive_constants_set(13.7, 0.0,96.0); // Fwd/rev constants, used for odom and non odom motions
- chassis.pid_heading_constants_set(0.8, 0.0, 0.3); // Holds the robot straight while going forward without odom
- chassis.pid_turn_constants_set(4.2, 0.0, 37.7, 15.0); // Turn in place constants
- chassis.pid_swing_constants_set(6.0, 0.0, 65.0); // Swing constants
- chassis.pid_odom_angular_constants_set(4.8, 0.0, 50.0); // Angular control for odom motions
- chassis.pid_odom_boomerang_constants_set(6.0, 0.0, 48.0); // Angular control for boomerang motions
-
- // Exit conditions
-chassis.pid_turn_exit_condition_set(40_ms, 4_deg, 80_ms, 7_deg, 150_ms, 150_ms);
- chassis.pid_swing_exit_condition_set(30_ms, 2_deg, 70_ms, 6_deg, 70_ms, 90_ms);
-chassis.pid_drive_exit_condition_set(10000_ms, 2.5_in, 10000_ms, 4_in, 10000_ms, 10000_ms);
- chassis.pid_odom_turn_exit_condition_set(70_ms, 3_deg, 100_ms, 7_deg, 250_ms, 250_ms);
- chassis.pid_odom_drive_exit_condition_set(70_ms, 2.5_in, 100_ms, 4_in, 250_ms, 250_ms);
- chassis.pid_turn_chain_constant_set(5_deg);
- chassis.pid_swing_chain_constant_set(13_deg);
- chassis.pid_drive_chain_constant_set(4_in);
-
- // Slew constants
- chassis.slew_turn_constants_set(3_deg, 70);
- chassis.slew_drive_constants_set(5_in, 80);
- chassis.slew_swing_constants_set(3_in, 80);
-
- // The amount that turns are prioritized over driving in odom motions
- // - if you have tracking wheels, you can run this higher. 1.0 is the max
- chassis.odom_turn_bias_set(0.81);
- 
- chassis.odom_look_ahead_set(10_in); // This is how far ahead in the path the robot looks at
- chassis.odom_boomerang_distance_set(10_in); // This sets the maximum distance away from target that the carrot point can be
- chassis.odom_boomerang_dlead_set(0.600); // This handles how aggressive the end of boomerang motions are
-
- chassis.pid_angle_behavior_set(ez::shortest); // Changes the default behavior for turning, this defaults it to the shortest path there
-}
 
 
 // Void Methods for Auton ----------------------------------------------------------------------------------------------
@@ -206,7 +172,7 @@ void chain_drive(double target, int chain_target, int speed){
 
 void max_drive(double target, int speed){
  chassis.pid_drive_set(target, speed);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
 }
 
 void mid_drive(int target, int chain_target){
