@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "DRIVEEE",
+    "project_name": "Drive",
     "target": "v5",
     "templates": {
       "kernel": {

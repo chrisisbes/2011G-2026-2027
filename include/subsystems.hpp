@@ -41,5 +41,5 @@ inline bool manualLift = false;
 
 
 
-inline pros::Motor Claw(8, pros::MotorGearset::green);
+inline pros::Motor Claw(-8, pros::MotorGearset::green);
 inline pros::Motor Intake(9, pros::MotorGearset::green);

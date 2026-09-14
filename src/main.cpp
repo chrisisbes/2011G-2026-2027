@@ -30,10 +30,10 @@ bool DRIVE_SKILLS = true;
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {12, 16, 13},  // Left Chassis Ports (negative port will reverse it!)
-    {-11, -15, -14},  // Right Chassis Ports (negative port will reverse it!)
+    {-12, -16, -13},  // Left Chassis Ports (negative port will reverse it!)
+    {11, 15, 14},  // Right Chassis Ports (negative port will reverse it!)
 
-    16,      // IMU Port
+    7,      // IMU Port
     2.75,   // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450.0);  // Wheel RPM = cartridge * (motor gear / wheel gear)
 
@@ -48,30 +48,7 @@ ez::tracking_wheel vert_tracker(19, 2.75, 0.8125);   // This tracking wheel is p
 
 
 
-void lift_pid_task(void*) {
-  pros::delay(2000);
 
-  const double kG = 1; // tune later
-
-  while (true) {
-
-    if (!manualLift) {
-      double position = get_Lift_position();
-
-      double pidOutput = lift_controller.compute(position);
-
-      double output = pidOutput;
-
-      if (position > 5) {
-        output += kG;
-      }
-
-      set_Lift(output);
-    }
-
-    pros::delay(ez::util::DELAY_TIME);
-  }
-}
 
 
 /**
@@ -84,7 +61,6 @@ void initialize() {
   // pros::Task intake_task(intake_control_task, NULL, "Intake Control task");
   Rotation.set_position(0); // Resets Rotation Sensor Value --------------------------------------------------------------------------------
   Rotation.set_data_rate(5); // Sets Data Rate to 5ms (fastest possible refresh) -----------------------------------------------------
-  static pros::Task LiftTask(lift_pid_task, nullptr, "Lift PID");
   LiftLeft.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   LiftRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   lift_controller.exit_condition_set(80, 50, 300, 150, 500, 500);
@@ -309,16 +285,21 @@ void opcontrol() {
   autonomous_mode = false; 
   reverse_on_red=false; 
   
-  // Track Loader and Deflector states with booleans
+  // Track PID
+  chassis.pid_tuner_print_terminal_set(true);
 
+  chassis.pid_tuner_increment_p_set(0.1);
+  chassis.pid_tuner_increment_i_set(0.01);
+  chassis.pid_tuner_increment_d_set(0.5);
+  chassis.pid_tuner_increment_start_i_set(5);
   
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
 
     chassis.drive_set(
-    master.get_analog(ANALOG_RIGHT_Y),
-    master.get_analog(ANALOG_LEFT_Y)); //Backward Tank
+    -master.get_analog(ANALOG_RIGHT_Y),
+    -master.get_analog(ANALOG_LEFT_Y)); //Backward Tank
     // chassis.opcontrol_tank();  // Tank control
     // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
@@ -352,37 +333,38 @@ void opcontrol() {
     
      
 
-    if (master.get_digital(DIGITAL_DOWN)){
-      Claw.move(-120);
-    }
-    else if (master.get_digital(DIGITAL_B)){
+    if (master.get_digital(DIGITAL_R1)){
       Claw.move(120);
+    }
+    else if (master.get_digital(DIGITAL_R2)){
+      Claw.move(-120);
     }
     else{
       Claw.move(0);
     }
 
-   if (master.get_digital(DIGITAL_L1)) {
-  manualLift = true;
+//    Lift
+
+ if (master.get_digital(DIGITAL_L1)) {
+
 
   // lift up
-  set_Lift(100);
+    LiftLeft.move(127);
+  LiftRight.move(127);
 }
 else if (master.get_digital(DIGITAL_L2)) {
-  manualLift = true;
 
   // lift down
-  set_Lift(-80);
+  LiftLeft.move(-80);
+  LiftRight.move(-80);
 }
 else {
-  if (manualLift) {
-    // Driver just released the button.
-    // Hold exactly where the lift currently is.
-    set_lift_pos(get_Lift_position());
-
-    manualLift = false;
+  LiftLeft.move(0);
+  LiftRight.move(0);
   }
-}
+
+
+
 
 //hi
     
