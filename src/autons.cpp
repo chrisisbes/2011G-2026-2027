@@ -26,20 +26,20 @@ void default_constants() {
  // P, I, D, and Start I
  chassis.pid_drive_constants_set(13.7, 0.0,96.0); // Fwd/rev constants, used for odom and non odom motions
  chassis.pid_heading_constants_set(0.8, 0.0, 0.3); // Holds the robot straight while going forward without odom
- chassis.pid_turn_constants_set(1.00, 0.0, 2.75); // Turn in place constants
+ chassis.pid_turn_constants_set(1.02, 0.0, 2.75); // Turn in place constants
  chassis.pid_swing_constants_set(6.0, 0.0, 65.0); // Swing constants
  chassis.pid_odom_angular_constants_set(4.8, 0.0, 50.0); // Angular control for odom motions
  chassis.pid_odom_boomerang_constants_set(6.0, 0.0, 48.0); // Angular control for boomerang motions
 
  // Exit conditions
-chassis.pid_turn_exit_condition_set(40_ms, 4_deg, 80_ms, 7_deg, 150_ms, 150_ms);
+chassis.pid_turn_exit_condition_set(40_ms, 2_deg, 80_ms, 5_deg, 150_ms, 150_ms);
  chassis.pid_swing_exit_condition_set(30_ms, 2_deg, 70_ms, 6_deg, 70_ms, 90_ms);
-chassis.pid_drive_exit_condition_set(40_ms, 2.5_in, 80_ms, 4_in, 150_ms, 150_ms);
+chassis.pid_drive_exit_condition_set(40_ms, 1_in, 80_ms, 2_in, 150_ms, 150_ms);
  chassis.pid_odom_turn_exit_condition_set(70_ms, 3_deg, 100_ms, 7_deg, 250_ms, 250_ms);
  chassis.pid_odom_drive_exit_condition_set(70_ms, 2.5_in, 100_ms, 4_in, 250_ms, 250_ms);
- chassis.pid_turn_chain_constant_set(5_deg);
+ chassis.pid_turn_chain_constant_set(4.5_deg);
  chassis.pid_swing_chain_constant_set(13_deg);
- chassis.pid_drive_chain_constant_set(4_in);
+ chassis.pid_drive_chain_constant_set(3.5_in);
  
 
  // Slew constants
@@ -241,15 +241,8 @@ void omove(double x, double y, double angle, int direction, int speed){
 
 // --------------------------------------------------------------------------------------------------------------------------------
 
-void raiseLift() {
-    //Lift.move(127);
-    pros::delay(600);   // tune this
-    //Lift.move(0);
-}
-void lowLift() {
-    //Lift.move(127);
-    pros::delay(600);   // tune this
-    //Lift.move(0);
+void claw(double move){
+    Claw.move(move);
 }
 
 
@@ -307,33 +300,46 @@ void tug(int attempts) {
 
 void left_side(){
 chassis.odom_xyt_set(0_in, 0_in, -135_deg); // Initialize the odometry with specified parameters
-chain_drive(-5, 90);
-//claw(true);
-chain_drive(2, 80);
-lswing(-180, -175, 5, 70);
-chain_drive(2, 90);
-chain_drive(-2, 90);
-chain_drive(2, 90);
-chain_drive(-24, 90);
-//claw(false);
-chain_turn(-135, 90);
-chain_drive(-15, 90);
-//claw(true);
-chain_turn(0, 100);
-pros::Task liftTask(raiseLift);
+drive(-12.4, 60);
+pros::delay(50);
+Claw.move(120);
+pros::delay(500);
+chain_drive(2, 60);
+chassis.pid_swing_set(ez::RIGHT_SWING,-180,60,30,ez::ccw,true);
+chassis.pid_wait_until(-175);
+chain_drive(-5,40);
+pros::delay(100);
+chain_drive(6, 55);
+chain_drive(-6, 40);
+chain_drive(-18, 60);
+chain_turn(-135, 60);
+chain_drive(-20, 90);
+Claw.move(-120);
+pros::delay(600);
+set_lift_pos(2500);
+pros::delay(400);
+chain_drive(-3, 60);
+turn(0, 100);
 chain_drive(-18,100);
-//claw(false);
-rswing(45, 44, 5, 90);
-pros::Task lowerTask(lowLift);
-chain_drive(-30, 90);
-//claw(true)
+set_lift_pos(800);
+pros::delay(500);
+set_lift_pos(500);
+Claw.move(120);
+pros::delay(200);
+chassis.pid_swing_set(ez::RIGHT_SWING,-60,60,10,ez::ccw,true);
+chassis.pid_wait_until(-52);
+set_lift_pos(0);
+chain_drive(-27, 90);
+Claw.move(-120);
+pros::delay(600);
+chain_drive(-4, 80);
 chain_turn(90, 100);
-chain_drive(-24,90);
-pros::Task liftTask2(raiseLift);
+chain_drive(-22,90);
+//pros::Task liftTask2(raiseLift);
 //claw(false)
-chain_drive(-26, 90);
-pros::Task lowerTask2(lowLift);
-chain_turn(180);
+chain_drive(24, 90);
+//pros::Task lowerTask2(lowLift);
+chain_turn(0);
 chain_drive(-9, 30);
 }
 
@@ -341,8 +347,7 @@ chain_drive(-9, 30);
 ;
 
 void pid_tuning_auton() {
-turn(90, 80);
-
+chain_turn(180, 100);
 }
 
 
