@@ -3,8 +3,8 @@
 void default_constants();
 void hold_constants();
 
-void left_side();
-
+void near_side();
+void far_side();
 void drive_and_turn();
 void wait_until_change_speed();
 void swing_example();

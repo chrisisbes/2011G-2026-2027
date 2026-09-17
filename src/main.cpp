@@ -94,7 +94,7 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"", pid_tuning_auton},
+      {"", far_side},
       {"", swing_example},
       {"", motion_chaining},
       {"", combining_movements},
@@ -148,6 +148,34 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+
+ void ez_screen_task() {
+  while (true) {
+    pros::screen::print(
+        TEXT_MEDIUM,
+        4,
+        "X: %.2f in       ",
+        chassis.odom_x_get()
+    );
+
+    pros::screen::print(
+        TEXT_MEDIUM,
+        5,
+        "Y: %.2f in       ",
+        chassis.odom_y_get()
+    );
+
+    pros::screen::print(
+        TEXT_MEDIUM,
+        6,
+        "Heading: %.2f deg       ",
+        chassis.odom_theta_get()
+    );
+
+    pros::delay(50);
+  }
+}
 void autonomous() {
   pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -155,10 +183,10 @@ void autonomous() {
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Hold mode for consistency
-  
+  start_lift_pid_task();
   ez::as::auton_selector.selected_auton_call();
   pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
-
+  pros::Task ezScreenTask(ez_screen_task);
 }
 
 /**
@@ -179,39 +207,9 @@ void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int lin
  * Adding new pages here will let you view them during user control or autonomous
  * and will help you debug problems you're having
  */
-void ez_screen_task() {
-  while (true) {
-    // Only run this when not connected to a competition switch
-    if (!pros::competition::is_connected()) {
-      // Blank page for odom debugging
-      if (chassis.odom_enabled() && !chassis.pid_tuner_enabled()) {
-        // If we're on the first blank page...
-        if (ez::as::page_blank_is_on(0)) {
-          // Display X, Y, and Theta
-          ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
-                               "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
-                               "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
-                           1);  // Don't override the top Page line
 
-          // Display all trackers that are being used
-          screen_print_tracker(chassis.odom_tracker_left, "l", 4);
-          screen_print_tracker(chassis.odom_tracker_right, "r", 5);
-          screen_print_tracker(chassis.odom_tracker_back, "b", 6);
-          screen_print_tracker(chassis.odom_tracker_front, "f", 7);
-        }
-      }
-    }
 
-    // Remove all blank pages when connected to a comp switch
-    else {
-      if (ez::as::page_blank_amount() > 0)
-        ez::as::page_blank_remove_all();
-    }
 
-    pros::delay(ez::util::DELAY_TIME);
-  }
-}
-pros::Task ezScreenTask(ez_screen_task);
 
 /**
  * Gives you some extras to run in your opcontrol:
@@ -334,10 +332,10 @@ void opcontrol() {
      
 
     if (master.get_digital(DIGITAL_R1)){
-      Claw.move(120);
+      Claw.move(-120);
     }
     else if (master.get_digital(DIGITAL_R2)){
-      Claw.move(-120);
+      Claw.move(120);
     }
     else{
       Claw.move(0);
@@ -387,15 +385,15 @@ else {
     int left_drive_temp = (pros::c::motor_get_temperature(12) + pros::c::motor_get_temperature(16) + pros::c::motor_get_temperature(13)) / 3;
 
     // Prints values for debugging if bool debug is set to true (at the top of the code)
-    if (debug == true) {
-        pros::screen::print(TEXT_MEDIUM, 1, "Drive: %d", drive_temp);
-        pros::screen::print(TEXT_MEDIUM, 2, "Right Drive: %d", right_drive_temp);
-        pros::screen::print(TEXT_MEDIUM, 3, "Left Drive: %d", left_drive_temp);
-        pros::screen::print(TEXT_MEDIUM, 4, "Left Drive: %d", left_drive_temp);
-        pros::screen::print(TEXT_MEDIUM, 5, "Intake: %d", intake_temp);
-        pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
-        pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
-    }
+    // if (debug == true) {
+    //     pros::screen::print(TEXT_MEDIUM, 1, "Drive: %d", drive_temp);
+    //     pros::screen::print(TEXT_MEDIUM, 2, "Right Drive: %d", right_drive_temp);
+    //     pros::screen::print(TEXT_MEDIUM, 3, "Left Drive: %d", left_drive_temp);
+    //     pros::screen::print(TEXT_MEDIUM, 4, "Left Drive: %d", left_drive_temp);
+    //     pros::screen::print(TEXT_MEDIUM, 5, "Intake: %d", intake_temp);
+    //     pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
+    //     pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
+    // }
 
 
     // Always prints the temperatures of each motor group to the controller

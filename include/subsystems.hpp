@@ -21,7 +21,7 @@ inline void set_Lift(int input) {
 }
 
 // P, I, D, Start I
-inline ez::PID lift_controller{3.6, 0, 7, 0, "Lift"};
+inline ez::PID lift_controller{3.6, 0, 7.5, 0, "Lift"};
 
 inline double get_Lift_position() {
   return Rotation.get_position() / 100.0;

@@ -37,7 +37,7 @@ chassis.pid_turn_exit_condition_set(40_ms, 2_deg, 80_ms, 5_deg, 150_ms, 150_ms);
 chassis.pid_drive_exit_condition_set(40_ms, 1_in, 80_ms, 2_in, 150_ms, 150_ms);
  chassis.pid_odom_turn_exit_condition_set(70_ms, 3_deg, 100_ms, 7_deg, 250_ms, 250_ms);
  chassis.pid_odom_drive_exit_condition_set(70_ms, 2.5_in, 100_ms, 4_in, 250_ms, 250_ms);
- chassis.pid_turn_chain_constant_set(4.5_deg);
+ chassis.pid_turn_chain_constant_set(5.5_deg);
  chassis.pid_swing_chain_constant_set(13_deg);
  chassis.pid_drive_chain_constant_set(3.5_in);
  
@@ -203,12 +203,12 @@ void omove(double x, double y, int direction){
  if (direction > 0){
  chassis.pid_odom_set({{x, y}, fwd, DRIVE_SPEED},
  false);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
  else{
  chassis.pid_odom_set({{x, y}, rev, DRIVE_SPEED},
  true);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
 }
 
@@ -216,12 +216,12 @@ void omove(double x, double y, double angle, int direction){
  if (direction > 0){
  chassis.pid_odom_set({{x, y, angle}, fwd, DRIVE_SPEED},
  true);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
  else{
  chassis.pid_odom_set({{x, y, angle}, rev, DRIVE_SPEED},
  true);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
 }
 
@@ -229,12 +229,12 @@ void omove(double x, double y, double angle, int direction, int speed){
  if (direction > 0){
  chassis.pid_odom_set({{x, y, angle}, fwd, speed},
  false);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
  else{
  chassis.pid_odom_set({{x, y, angle}, rev, speed},
  false);
- chassis.pid_wait_quick_chain();
+ chassis.pid_wait();
  }
 }
 
@@ -298,9 +298,9 @@ void tug(int attempts) {
 }
 
 
-void left_side(){
-chassis.odom_xyt_set(0_in, 0_in, -135_deg); // Initialize the odometry with specified parameters
-drive(-12.4, 60);
+void near_side(){
+chassis.odom_xyt_set(12_in, 12_in, -135_deg); // Initialize the odometry with specified parameters
+drive(-10.5, 60);
 pros::delay(50);
 Claw.move(120);
 pros::delay(500);
@@ -311,16 +311,19 @@ chain_drive(-5,40);
 pros::delay(100);
 chain_drive(6, 55);
 chain_drive(-6, 40);
-chain_drive(-18, 60);
-chain_turn(-135, 60);
-chain_drive(-20, 90);
+chain_drive(-14, 80);
+chain_turn(-135, 70);
+chain_drive(-11, 60);
 Claw.move(-120);
-pros::delay(600);
+pros::delay(400);
 set_lift_pos(2500);
 pros::delay(400);
-chain_drive(-3, 60);
-turn(0, 100);
+chain_drive(-8, 60);
+chassis.pid_turn_set(0, 60);
+chassis.pid_wait();
+pros::delay(100);
 chain_drive(-18,100);
+chain_drive(-4, 60);
 set_lift_pos(800);
 pros::delay(500);
 set_lift_pos(500);
@@ -329,14 +332,21 @@ pros::delay(200);
 chassis.pid_swing_set(ez::RIGHT_SWING,-60,60,10,ez::ccw,true);
 chassis.pid_wait_until(-52);
 set_lift_pos(0);
-chain_drive(-27, 90);
+chain_drive(-20, 90);
+chain_drive(-5, 60);
 Claw.move(-120);
-pros::delay(600);
-chain_drive(-4, 80);
+pros::delay(400);
+set_lift_pos(2500);
+pros::delay(400);
+chain_drive(-2, 80);
 chain_turn(90, 100);
-chain_drive(-22,90);
-//pros::Task liftTask2(raiseLift);
-//claw(false)
+chain_drive(-15,80);
+chain_drive(-5, 60);
+set_lift_pos(800);
+pros::delay(500);
+set_lift_pos(500);
+Claw.move(120);
+pros::delay(200);
 chain_drive(24, 90);
 //pros::Task lowerTask2(lowLift);
 chain_turn(0);
@@ -344,10 +354,51 @@ chain_drive(-9, 30);
 }
 
 
-;
+void far_side(){
+chassis.odom_xyt_set(-12_in, 12_in, 135_deg); // Initialize the odometry with specified parameters
+drive(-11.5, 60);
+pros::delay(50);
+Claw.move(120);
+pros::delay(500);
+chain_drive(2, 60);
+chassis.pid_swing_set(ez::LEFT_SWING,180,60,30,ez::cw,true);
+chassis.pid_wait_until(175);
+chain_drive(-5,40);
+pros::delay(100);
+chain_drive(6, 55);
+omove(-11.37,26.17, 180,-1,60);
+turn(43.1, 60);
+Claw.move(-120);
+chain_drive(-12,60);
+chain_drive(-11,20);
+pros::delay(800);
+set_lift_pos(2500);
+chain_drive(14.5, 70);
+chain_turn(90, 50);
+chain_drive(-7, 50);
+set_lift_pos(800);
+pros::delay(500);
+set_lift_pos(500);
+Claw.move(120);
+// chain_drive(4, 60);
+// chain_turn(-90, 60);
+// drive(-48, 70);
+// chassis.pid_swing_set(ez::RIGHT_SWING,0,60,ez::cw,true);
+// chassis.pid_wait_until(-5);
+// Claw.move(-120);
+// chain_drive(-4,20);
+// pros::delay(500);
+// set_lift_pos(2500);
+// chain_turn(180, 50);
+// chain_drive(-7, 50);
+// set_lift_pos(800);
+// pros::delay(500);
+// set_lift_pos(500);
+// Claw.move(120);
+}
 
 void pid_tuning_auton() {
-chain_turn(180, 100);
+set_lift_pos(1000);
 }
 
 
