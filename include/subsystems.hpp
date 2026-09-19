@@ -21,7 +21,7 @@ inline void set_Lift(int input) {
 }
 
 // P, I, D, Start I
-inline ez::PID lift_controller{3.6, 0, 7.5, 0, "Lift"};
+inline ez::PID lift_controller{1.5, 0, 10, 0, "Lift"};
 
 inline double get_Lift_position() {
   return Rotation.get_position() / 100.0;
@@ -48,11 +48,22 @@ inline void stop_lift_pid() {
   set_Lift(0);
 }
 
+
+#include <cmath>
+
 inline void lift_pid_task(void*) {
   while (true) {
     if (lift_pid_enabled) {
       double position = get_Lift_position();
+      double error = lift_controller.target_get() - position;
       double output = lift_controller.compute(position);
+
+      if (std::abs(error) <= 50.0) {
+        output = 0.0;
+      }
+      else if (output < -70.0) {
+        output = -70.0;
+      }
 
       set_Lift(static_cast<int>(output));
     }

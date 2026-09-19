@@ -300,80 +300,94 @@ void tug(int attempts) {
 
 void near_side(){
 chassis.odom_xyt_set(12_in, 12_in, -135_deg); // Initialize the odometry with specified parameters
-drive(-10.5, 60);
-pros::delay(50);
-Claw.move(120);
+set_lift_pos(900);
 pros::delay(500);
-chain_drive(2, 60);
-chassis.pid_swing_set(ez::RIGHT_SWING,-180,60,30,ez::ccw,true);
+drive(-13.2, 70); //drive forward
+pros::delay(500);
+Claw.move(120); // score claw
+pros::delay(500);
+set_lift_pos(1500); //Put up lift to detach toggle ziptie
+chain_drive(9, 60); //Drive away from alliance goal
+chassis.pid_swing_set(ez::RIGHT_SWING,-180,65,35,ez::ccw,true); //Turn towards toggle and switch color
 chassis.pid_wait_until(-175);
-chain_drive(-5,40);
+chain_drive(-5,40); //Back out of toggle
 pros::delay(100);
-chain_drive(6, 55);
-chain_drive(-6, 40);
-chain_drive(-14, 80);
-chain_turn(-135, 70);
-chain_drive(-11, 60);
-Claw.move(-120);
+set_lift_pos(700); //Put lift down
+chain_drive(6, 55); // Go back in toggle to switch color
+chain_drive(-6, 40); //Go out toggle
+set_lift_pos(700);
+chain_drive(-12 , 80); //Drive away from toggle
+chain_turn(-135, 70); // Turn Towards first yellow stack
+chain_drive(-8,70); //Drive towards first toggle
+chain_drive(-10, 50); //Drive slow to succesfully clamp onto stack
+Claw.move(-60); //Close onto stack
 pros::delay(400);
-set_lift_pos(2500);
+set_lift_pos(3200); // Lift up
 pros::delay(400);
-chain_drive(-8, 60);
-chassis.pid_turn_set(0, 60);
+chain_drive(-6, 60); // Drive slightly forward(claw front) to line up to alliance goal
+chassis.pid_turn_set(0, 60); // Turn towards alliance goal
 chassis.pid_wait();
 pros::delay(100);
-chain_drive(-18,100);
-chain_drive(-4, 60);
-set_lift_pos(800);
+chain_drive(-18,110); //Drive towards goal
+chain_drive(-4, 60); //Slow down to not tip
+set_lift_pos(1000); //Lower lift
 pros::delay(500);
 set_lift_pos(500);
-Claw.move(120);
+Claw.move(120); // Open claw to score on stack
 pros::delay(200);
-chassis.pid_swing_set(ez::RIGHT_SWING,-60,60,10,ez::ccw,true);
+chassis.pid_swing_set(ez::RIGHT_SWING,-55,60,10,ez::ccw,true); // Swing out of alliance goal to face 2nd yellow stack
 chassis.pid_wait_until(-52);
-set_lift_pos(0);
-chain_drive(-20, 90);
-chain_drive(-5, 60);
-Claw.move(-120);
+set_lift_pos(0); // Put lift down
+chain_drive(-16, 100); //Drive towards 2nd yellow stack
+chain_drive(-5, 60); //Slow down to succesfuly clamp onto 2nd yellow stack
+Claw.move(-120); // Close claw to hold onto 2nd yellow stack
 pros::delay(400);
-set_lift_pos(2500);
+set_lift_pos(3300); // Put lift up to score 2nd yellow stack
 pros::delay(400);
-chain_drive(-2, 80);
-chain_turn(90, 100);
-chain_drive(-15,80);
-chain_drive(-5, 60);
-set_lift_pos(800);
+chain_drive(-2, 80); //Drive out to allign with alliance goal
+chain_turn(90, 100); //Turn to face alliance goal
+chain_drive(-15,80); //Drive towards alliance goal
+chain_drive(-5, 60);//Slow down to not tip
+set_lift_pos(1000); //Lower lift to score 2nd yellow stack
 pros::delay(500);
-set_lift_pos(500);
-Claw.move(120);
+set_lift_pos(0);
+Claw.move(120); //Open clamp to score 2nd yellow stack
 pros::delay(200);
-chain_drive(24, 90);
-//pros::Task lowerTask2(lowLift);
-chain_turn(0);
-chain_drive(-9, 30);
+chain_drive(20, 100); //Drive backwards(intake facing) to line up with Loader
+chain_turn(0); // Turn to Face loader
+chain_drive(-9, 30); //Drive towards loader
 }
 
 
 void far_side(){
 chassis.odom_xyt_set(-12_in, 12_in, 135_deg); // Initialize the odometry with specified parameters
-drive(-11.5, 60);
+set_lift_pos(550); 
+drive(-12.7, 70);
 pros::delay(50);
 Claw.move(120);
 pros::delay(500);
-chain_drive(2, 60);
-chassis.pid_swing_set(ez::LEFT_SWING,180,60,30,ez::cw,true);
+set_lift_pos(1000);
+chain_drive(9, 60);
+chassis.pid_swing_set(ez::LEFT_SWING,180,65,35,ez::cw,true);
 chassis.pid_wait_until(175);
+set_lift_pos(0);
 chain_drive(-5,40);
 pros::delay(100);
 chain_drive(6, 55);
-omove(-11.37,26.17, 180,-1,60);
-turn(43.1, 60);
+drive(-18, 60);
+chassis.pid_turn_exit_condition_set(40_ms, 1_deg, 80_ms, 2_deg, 150_ms, 150_ms);
+turn(46.6, 60);
 Claw.move(-120);
-chain_drive(-12,60);
-chain_drive(-11,20);
-pros::delay(800);
+chain_drive(-21,60);
+chain_drive(-6,40);
+chassis.pid_turn_exit_condition_set(40_ms, 2_deg, 80_ms, 5_deg, 150_ms, 150_ms);
+chain_turn(10, 30);
+chain_drive(-9, 20);
+pros::delay(400);
+chain_drive(-2, 10);
+pros::delay(400);
 set_lift_pos(2500);
-chain_drive(14.5, 70);
+chain_drive(10.5, 70);
 chain_turn(90, 50);
 chain_drive(-7, 50);
 set_lift_pos(800);
@@ -398,7 +412,10 @@ Claw.move(120);
 }
 
 void pid_tuning_auton() {
-set_lift_pos(1000);
+chassis.odom_xyt_set(0,0,0);
+set_lift_pos(3000);
+pros::delay(3000);
+set_lift_pos(0);
 }
 
 

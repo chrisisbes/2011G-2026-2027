@@ -59,7 +59,7 @@ ez::tracking_wheel vert_tracker(19, 2.75, 0.8125);   // This tracking wheel is p
  */
 void initialize() {
   // pros::Task intake_task(intake_control_task, NULL, "Intake Control task");
-  Rotation.set_position(0); // Resets Rotation Sensor Value --------------------------------------------------------------------------------
+  Rotation.reset_position(); // Resets Rotation Sensor Value --------------------------------------------------------------------------------
   Rotation.set_data_rate(5); // Sets Data Rate to 5ms (fastest possible refresh) -----------------------------------------------------
   LiftLeft.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   LiftRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -94,7 +94,7 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"", far_side},
+      {"", pid_tuning_auton},
       {"", swing_example},
       {"", motion_chaining},
       {"", combining_movements},
@@ -186,7 +186,8 @@ void autonomous() {
   start_lift_pid_task();
   ez::as::auton_selector.selected_auton_call();
   pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
-  pros::Task ezScreenTask(ez_screen_task);
+  pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
+
 }
 
 /**
@@ -291,6 +292,8 @@ void opcontrol() {
   chassis.pid_tuner_increment_d_set(0.5);
   chassis.pid_tuner_increment_start_i_set(5);
   
+  //  start_lift_pid_task();
+  start_lift_pid_task();
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
@@ -335,7 +338,7 @@ void opcontrol() {
       Claw.move(-120);
     }
     else if (master.get_digital(DIGITAL_R2)){
-      Claw.move(120);
+      Claw.move(120); //Open
     }
     else{
       Claw.move(0);
@@ -347,16 +350,19 @@ void opcontrol() {
 
 
   // lift up
+  stop_lift_pid();
     LiftLeft.move(127);
   LiftRight.move(127);
 }
 else if (master.get_digital(DIGITAL_L2)) {
 
   // lift down
+  stop_lift_pid();
   LiftLeft.move(-80);
   LiftRight.move(-80);
 }
 else {
+  stop_lift_pid();
   LiftLeft.move(0);
   LiftRight.move(0);
   }
@@ -373,7 +379,10 @@ else {
     }
 
 
-
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+      start_lift_pid_task();
+      set_lift_pos(705);
+    }
   
 
     // Debug Functions ----------------------------------------------------------------------------------------------------------------------
@@ -384,16 +393,16 @@ else {
     int right_drive_temp = (pros::c::motor_get_temperature(11) + pros::c::motor_get_temperature(15) + pros::c::motor_get_temperature(14)) / 3;
     int left_drive_temp = (pros::c::motor_get_temperature(12) + pros::c::motor_get_temperature(16) + pros::c::motor_get_temperature(13)) / 3;
 
-    // Prints values for debugging if bool debug is set to true (at the top of the code)
-    // if (debug == true) {
-    //     pros::screen::print(TEXT_MEDIUM, 1, "Drive: %d", drive_temp);
-    //     pros::screen::print(TEXT_MEDIUM, 2, "Right Drive: %d", right_drive_temp);
-    //     pros::screen::print(TEXT_MEDIUM, 3, "Left Drive: %d", left_drive_temp);
-    //     pros::screen::print(TEXT_MEDIUM, 4, "Left Drive: %d", left_drive_temp);
-    //     pros::screen::print(TEXT_MEDIUM, 5, "Intake: %d", intake_temp);
-    //     pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
-    //     pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
-    // }
+    //Prints values for debugging if bool debug is set to true (at the top of the code)
+    if (debug == true) {
+        pros::screen::print(TEXT_MEDIUM, 1, "Drive: %d", drive_temp);
+        pros::screen::print(TEXT_MEDIUM, 2, "Right Drive: %d", right_drive_temp);
+        pros::screen::print(TEXT_MEDIUM, 3, "Left Drive: %d", left_drive_temp);
+        pros::screen::print(TEXT_MEDIUM, 4, "Left Drive: %d", left_drive_temp);
+        pros::screen::print(TEXT_MEDIUM, 5, "Intake: %d", intake_temp);
+        pros::screen::print(TEXT_MEDIUM, 6, "Heading: %.2f", chassis.odom_theta_get());
+        pros::screen::print(TEXT_MEDIUM, 7,"Lift: %.2f deg",Rotation.get_position() / 100.0);
+    }
 
 
     // Always prints the temperatures of each motor group to the controller

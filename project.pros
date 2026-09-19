@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Far Side",
+    "project_name": "Lift",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -402,8 +402,8 @@
       "compress_bin": true,
       "description": "Alex vs JOHNPORK",
       "remote_name": "EZ-Template",
-      "slot": 2,
-      "icon": "X"
+      "slot": 3,
+      "icon": "pizza"
     },
     "use_early_access": false
   }
