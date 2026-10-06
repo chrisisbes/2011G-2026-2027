@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Lift",
+    "project_name": "neara",
     "target": "v5",
     "templates": {
       "kernel": {
@@ -402,7 +402,7 @@
       "compress_bin": true,
       "description": "Alex vs JOHNPORK",
       "remote_name": "EZ-Template",
-      "slot": 3,
+      "slot": 1,
       "icon": "pizza"
     },
     "use_early_access": false

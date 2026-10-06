@@ -94,7 +94,7 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"", pid_tuning_auton},
+      {"", near_side},
       {"", swing_example},
       {"", motion_chaining},
       {"", combining_movements},
@@ -293,7 +293,7 @@ void opcontrol() {
   chassis.pid_tuner_increment_start_i_set(5);
   
   //  start_lift_pid_task();
-  start_lift_pid_task();
+  stop_lift_pid();
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
@@ -350,19 +350,19 @@ void opcontrol() {
 
 
   // lift up
-  stop_lift_pid();
+
     LiftLeft.move(127);
   LiftRight.move(127);
 }
 else if (master.get_digital(DIGITAL_L2)) {
 
   // lift down
-  stop_lift_pid();
+
   LiftLeft.move(-80);
   LiftRight.move(-80);
 }
 else {
-  stop_lift_pid();
+
   LiftLeft.move(0);
   LiftRight.move(0);
   }
@@ -379,10 +379,7 @@ else {
     }
 
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-      start_lift_pid_task();
-      set_lift_pos(705);
-    }
+
   
 
     // Debug Functions ----------------------------------------------------------------------------------------------------------------------
