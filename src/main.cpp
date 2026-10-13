@@ -346,13 +346,14 @@ void opcontrol() {
 
 //    Lift
 
- if (master.get_digital(DIGITAL_L1)) {
+ if (master.get_digital(DIGITAL_L1) && get_Lift_position() < 1000) {
 
 
   // lift up
 
     LiftLeft.move(127);
   LiftRight.move(127);
+
 }
 else if (master.get_digital(DIGITAL_L2)) {
 
@@ -366,8 +367,6 @@ else {
   LiftLeft.move(0);
   LiftRight.move(0);
   }
-
-
 
 
 //hi

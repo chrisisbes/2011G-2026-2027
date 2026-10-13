@@ -425,35 +425,35 @@ chain_drive(8, 80); //Go out toggle
 chain_drive(-8, 100); // Go back in toggle to switch color
 pros::delay(200);
 chain_drive(11, 70); //Go out toggle
-drive(-15,70);
+drive(-15,70); // drive towards alliance goal
 set_lift_pos(600);
-chassis.pid_turn_set(90, 60);
+chassis.pid_turn_set(90, 60); // turn to face alliance goal
 chassis.pid_wait();
 chain_drive(-6, 80);
-chain_drive(-6, 40);
+chain_drive(-6, 40); // slow down when close to the alliance goal to align properly
 set_lift_pos(500);
 pros::delay(500);
-Claw.move(120); // score claw
+Claw.move(120); // score pre-load
 pros::delay(500);
-drive(1, 40);
+drive(1, 40); // back slightly out of the alliance goal
 pros::delay(50);
-chassis.pid_turn_set(90, 60);
+chassis.pid_turn_set(90, 60); // make sure the robot is properly aligned after backing out
 chassis.pid_wait();
-drive(26.5, 60);
+drive(26.5, 60); // drive towards neutral goal to turn to turn properly
 set_lift_pos(0);
-Claw.move(-120);
-chassis.pid_turn_set(-38, 60);
+Claw.move(-120); // close claw to intake stake properly
+chassis.pid_turn_set(-38, 60); // turn towards yellow stack
 chassis.pid_wait();
-chain_drive(-12, 80);
-drive(-11, 15);
+chain_drive(-12, 80); // drive towards yellow stack
+drive(-11, 15); // slow down to properly intake yellow stack in claw
 pros::delay(500);
-drive(20, 80);
+drive(20, 80); // drive out after getting the stack
 set_lift_pos(1500);
-turn(-90, 70);
-chain_drive(-14, 50);
+turn(-90, 70); // turn towards neutral goal
+chain_drive(-14, 50); // drive towards neutral goal
 set_lift_pos(1000);
 pros::delay(500);
-Claw.move(120);
+Claw.move(120); // score neutral goal
 
 
 }
