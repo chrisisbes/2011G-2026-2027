@@ -242,7 +242,7 @@ void omove(double x, double y, double angle, int direction, int speed){
 // --------------------------------------------------------------------------------------------------------------------------------
 
 void claw(double move){
-    Claw.move(move);
+    Claw.set(true);
 }
 
 
@@ -304,7 +304,7 @@ set_lift_pos(700);
 pros::delay(200);
 drive(-14, 100); //drive forward
 set_lift_pos(600);
-Claw.move(120); // open claw
+Claw.set(true); // open claw
 pros::delay(500);
 set_lift_pos(1500); //Put up lift to detach toggle ziptie
 chain_drive(9, 60); //Drive away from alliance goa
@@ -320,7 +320,7 @@ chain_drive(-12 , 110); //Drive away from toggle
 turn(-135, 110); // Turn Towards first yellow stack
 chain_drive(-8,90); //Drive towards first toggle
 chain_drive(-7.5, 30); //Drive slow to succesfully clamp onto stack
-Claw.move(-30); //Close onto stack
+Claw.set(false); //Close onto stack
 pros::delay(500);
 set_lift_pos(1500); // Lift up
 pros::delay(100);
@@ -333,14 +333,14 @@ chain_drive(-3, 30); //Slow down to not tip
 set_lift_pos(1000); //Lower lift
 pros::delay(200);
 set_lift_pos(700);
-Claw.move(120); // Open claw to score on stack
+Claw.set(true); // Open claw to score on stack
 pros::delay(200);
 chassis.pid_swing_set(ez::RIGHT_SWING,-63,66,11,ez::ccw,true); // Swing out of alliance goal to face 2nd yellow stack
 chassis.pid_wait_until(-57);
 set_lift_pos(0); // Put lift down
 chain_drive(-15, 100); //Drive towards 2nd yellow stack
 chain_drive(-8.5, 30); //Slow down to succesfuly clamp onto 2nd yellow stack
-Claw.move(-30); // Close claw to hold onto 2nd yellow stack
+Claw.set(false); // Close claw to hold onto 2nd yellow stack
 pros::delay(400);
 set_lift_pos(2500); // Put lift up to score 2nd yellow stack
 pros::delay(200);
@@ -352,7 +352,7 @@ chain_drive(-5, 50);//Slow down to not tip
 set_lift_pos(1000); //Lower lift to score 2nd yellow stack
 pros::delay(500);
 set_lift_pos(0);
-Claw.move(120); //Open clamp to score 2nd yellow stack
+Claw.set(true); //Open clamp to score 2nd yellow stack
 pros::delay(200);
 chain_drive(20, 100); //Drive backwards(intake facing) to line up with Loader
 chain_turn(0); // Turn to Face loader
@@ -366,7 +366,7 @@ set_lift_pos(700);
 pros::delay(500);
 drive(-14, 80); //drive forward
 set_lift_pos(500);
-Claw.move(120); // score claw
+Claw.set(true); // score claw
 pros::delay(500);
 set_lift_pos(1500); //Put up lift to detach toggle ziptie
 chain_drive(9, 60); //Drive away from alliance goa
@@ -379,7 +379,7 @@ chain_drive(6, 70);
 drive(-18, 60);
 chassis.pid_turn_exit_condition_set(40_ms, 1_deg, 80_ms, 2_deg, 150_ms, 150_ms);
 turn(46.6, 60);
-Claw.move(-120);
+Claw.set(false);
 chain_drive(-18,60);
 chain_drive(-6,10);
 pros::delay(400);
@@ -392,7 +392,7 @@ chain_drive(-7, 50);
 set_lift_pos(800);
 pros::delay(500);
 set_lift_pos(500);
-Claw.move(120);
+Claw.set(true);
 // chain_drive(4, 60);
 // chain_turn(-90, 60);
 // drive(-48, 70);
@@ -433,7 +433,7 @@ chain_drive(-6, 80);
 chain_drive(-6, 40); // slow down when close to the alliance goal to align properly
 set_lift_pos(500);
 pros::delay(500);
-Claw.move(120); // score pre-load
+Claw.set(true); // score pre-load
 pros::delay(500);
 drive(1, 40); // back slightly out of the alliance goal
 pros::delay(50);
@@ -441,7 +441,7 @@ chassis.pid_turn_set(90, 60); // make sure the robot is properly aligned after b
 chassis.pid_wait();
 drive(26.5, 60); // drive towards neutral goal to turn to turn properly
 set_lift_pos(0);
-Claw.move(-120); // close claw to intake stake properly
+Claw.set(false); // close claw to intake stake properly
 chassis.pid_turn_set(-38, 60); // turn towards yellow stack
 chassis.pid_wait();
 chain_drive(-12, 80); // drive towards yellow stack
@@ -453,7 +453,7 @@ turn(-90, 70); // turn towards neutral goal
 chain_drive(-14, 50); // drive towards neutral goal
 set_lift_pos(1000);
 pros::delay(500);
-Claw.move(120); // score neutral goal
+Claw.set(true); // score neutral goal
 
 
 }

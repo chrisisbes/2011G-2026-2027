@@ -10,10 +10,12 @@ extern Drive chassis;
 
 // Your motors, sensors, etc. should go here.  Below are examples
 //Lift------------------------------------------------------
+
+inline Piston Claw('B');
 inline pros::Motor LiftLeft(-17, pros::MotorGearset::blue);
 inline pros::Motor LiftRight(18, pros::MotorGearset::blue);
 
-inline pros::Rotation Rotation(21);
+inline pros::Rotation Rotation(-9);
 
 inline void set_Lift(int input) {
   LiftLeft.move(input);
@@ -84,5 +86,4 @@ inline void start_lift_pid_task() {
 
 
 
-inline pros::Motor Claw(-8, pros::MotorGearset::green);
 inline pros::Motor Intake(9, pros::MotorGearset::green);

@@ -33,7 +33,7 @@ ez::Drive chassis(
     {-12, -16, -13},  // Left Chassis Ports (negative port will reverse it!)
     {11, 15, 14},  // Right Chassis Ports (negative port will reverse it!)
 
-    7,      // IMU Port
+    21,      // IMU Port
     2.75,   // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450.0);  // Wheel RPM = cartridge * (motor gear / wheel gear)
 
@@ -335,18 +335,15 @@ void opcontrol() {
      
 
     if (master.get_digital(DIGITAL_R1)){
-      Claw.move(-120);
+      Claw.set(true);
     }
     else if (master.get_digital(DIGITAL_R2)){
-      Claw.move(120); //Open
-    }
-    else{
-      Claw.move(0);
+      Claw.set(false); //Open
     }
 
 //    Lift
 
- if (master.get_digital(DIGITAL_L1) && get_Lift_position() < 1000) {
+ if (master.get_digital(DIGITAL_L1) && get_Lift_position() < 3800) {
 
 
   // lift up
